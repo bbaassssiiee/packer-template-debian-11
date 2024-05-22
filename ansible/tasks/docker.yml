@@ -6,7 +6,7 @@
 
 - name: Add Docker Repository
   ansible.builtin.apt_repository:
-    repo: deb https://download.docker.com/linux/debian bullseye stable
+    repo: deb https://download.docker.com/linux/debian bookworm stable
     state: present
     filename: docker
 
@@ -29,6 +29,6 @@
     mode: '0644'
     content: |
       {
-              "metrics-addr": "127.0.0.1:9323",
-              "experimental": true
+        "metrics-addr": "127.0.0.1:9323",
+        "experimental": true
       }
