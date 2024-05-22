@@ -1,12 +1,12 @@
-source "proxmox-iso" "debian-11" {
+source "proxmox-iso" "debian-12" {
   proxmox_url              = "https://${var.proxmox_host}/api2/json"
   username                 = var.proxmox_api_user
   password                 = var.proxmox_api_password
-  insecure_skip_tls_verify = false
+  insecure_skip_tls_verify = true
   node                     = var.proxmox_node
 
-  vm_name                 = "pckr-tmpl-debian-11"
-  template_description    = "Debian 11 Bullseye Packer Template -- Created: ${formatdate("YYYY-MM-DD hh:mm:ss ZZZ", timestamp())}"
+  vm_name                 = "pckr-tmpl-debian-12"
+  template_description    = "Debian 12 Bookworm Packer Template -- Created: ${formatdate("YYYY-MM-DD hh:mm:ss ZZZ", timestamp())}"
   vm_id                   = var.vmid
   os                      = "l26"
   cpu_type                = var.cpu_type
