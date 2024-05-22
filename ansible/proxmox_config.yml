@@ -1,0 +1,61 @@
+#!/usr/bin/env ansible-playbook
+---
+
+- name: Configure ProxMox for Packer
+  hosts: all
+  gather_facts: true
+  become: true
+
+  vars:
+    proxmox_api_user: 'infra_as_code@pve'
+    proxmox_api_password: "{{ lookup('env','PROXMOX_API_PASSWORD') }}"
+
+  tasks:
+    - name: Assert PROXMOX_API_PASSWORD is set as env var
+      ansible.builtin.assert:
+        that: proxmox_api_password | length > 5
+    - name: Configure free repo
+      ansible.builtin.copy:
+        src: pve-no-subscription.list
+        dest: /etc/apt/sources.list.d/
+        mode: '0644'
+
+    - name: Disable enterprise repos
+      ansible.builtin.file:
+        path: /etc/apt/sources.list.d/{{ item }}
+        state: absent
+      loop:
+        - ceph.list
+        - pve-enterprise.list
+
+    - name: Update apt cache
+      ansible.builtin.apt:
+        clean: true
+        upgrade: true
+
+    - name: Install python3-pexpect
+      ansible.builtin.apt:
+        name: python3-pexpect
+        state: present
+        allow_unauthenticated: true
+        update_cache: true
+
+    - name: Create API user
+      ansible.builtin.command:
+        cmd: "pveum useradd {{ proxmox_api_user }}"
+      register: useradd
+      failed_when: useradd.rc != 0 and useradd.rc != 2
+
+    - name: Set API user password
+      ansible.builtin.expect:
+        command: "pveum passwd {{ proxmox_api_user }}"
+        responses:
+          (?i)password: "{{ proxmox_api_password }}"
+
+    - name: Create role
+      ansible.builtin.command:
+        cmd: pveum roleadd Packer -privs "VM.Config.Disk VM.Config.CPU VM.Config.Memory Datastore.AllocateTemplate Datastore.Audit Datastore.AllocateSpace Sys.Modify VM.Config.Options VM.Allocate VM.Audit VM.Console VM.Config.CDROM VM.Config.Cloudinit VM.Config.Network VM.PowerMgmt VM.Config.HWType VM.Monitor SDN.Use"
+
+    - name: Associate this role to our user
+      ansible.builtin.command:
+        cmd: "pveum acl modify / -user '{{ proxmox_api_user }}' -role Packer"
