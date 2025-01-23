@@ -1,20 +1,22 @@
 variable "iso_url" {
   type    = string
-  default = "https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/debian-11.6.0-amd64-netinst.iso"
+  default = "https://get.debian.org/images/release/current/amd64/iso-cd/debian-12.5.0-amd64-netinst.iso"
 }
 
 variable "iso_storage_pool" {
   type    = string
+  default = "local"
 }
 
 variable "iso_checksum" {
   type    = string
-  default = "sha512:224cd98011b9184e49f858a46096c6ff4894adff8945ce89b194541afdfd93b73b4666b0705234bd4dff42c0a914fdb6037dd0982efb5813e8a553d8e92e6f51"
+  default = "sha512:33c08e56c83d13007e4a5511b9bf2c4926c4aa12fd5dd56d493c0653aecbab380988c5bf1671dbaea75c582827797d98c4a611f7fb2b131fbde2c677d5258ec9"
 }
 
 variable "vmid" {
   type = string
   description = "Proxmox Template ID"
+  default = 101
 }
 
 variable "cpu_type" {
@@ -39,6 +41,7 @@ variable "disk_size" {
 
 variable "storage_pool" {
   type    = string
+  default = "local"
 }
 
 variable "memory" {
@@ -69,5 +72,5 @@ variable "proxmox_host" {
 
 variable "proxmox_node" {
   type    = string
-  default = ""
+  default = "pve"
 }

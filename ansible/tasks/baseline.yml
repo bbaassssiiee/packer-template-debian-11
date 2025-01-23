@@ -16,10 +16,13 @@
       - linux-headers-amd64
       - linux-image-amd64
       - ncdu
+      - python3-expect
+      - python3-pip
       - sudo
       - software-properties-common
       - tmux
       - unattended-upgrades
+      - vim
       - wget
     state: present
     install_recommends: true
